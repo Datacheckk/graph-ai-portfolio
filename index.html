@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DataCheck | Public Health Data Simplified</title>
+  <style>
+    :root {
+      --teal-dark: #0b6e79;
+      --teal-main: #0fad9d;
+      --teal-light: #a0f5d5;
+      --bg-soft: #f2f4f7;
+      --text-main: #1c1d21;
+      --text-muted: #5c6473;
+      --accent-blue: #2563eb;
+      --card-bg: #ffffff;
+      --shadow-soft: 0 18px 45px rgba(5, 46, 58, 0.18);
+      --radius-lg: 18px;
+      --radius-xl: 28px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e7fffb, #d3f5ef 40%, #f2f4f7 80%);
+      color: var(--text-main);
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 16px 64px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(90deg, rgba(232, 255, 252, 0.96), rgba(231, 248, 246, 0.92));
+      border-bottom: 1px solid rgba(11, 110, 121, 0.08);
+    }
+
+    .nav {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.03em;
+    }
+
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 40% 60% 55% 45%;
+      background: conic-gradient(from 180deg at 50% 50%, #0fad9d, #0b6e79, #a0f5d5, #0fad9d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.95rem;
+      box-shadow: 0 10px 25px rgba(5, 80, 90, 0.35);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 0.95rem;
+    }
+
+    .nav-links a {
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--text-muted);
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(15, 173, 157, 0.1);
+      color: var(--teal-dark);
+      transform: translateY(-1px);
+    }
+
+    .nav-cta {
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--teal-main), var(--teal-dark));
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(9, 102, 107, 0.4);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-cta span {
+      font-size: 1rem;
+    }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr);
+      gap: 28px;
+      align-items: center;
+      padding: 32px 0 28px;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 173, 157, 0.08);
+      color: var(--teal-dark);
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+    }
+
+    .hero-kicker-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal-main);
+    }
+
+    .hero-title {
+      font-size: clamp(2.1rem, 3.2vw, 2.7rem);
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .hero-highlight {
+      background: linear-gradient(120deg, var(--teal-main), var(--accent-blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      margin-bottom: 16px;
+    }
+
+    .hero-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+      font-size: 0.8rem;
+    }
+
+    .hero-badge {
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(11, 110, 121, 0.05);
+      border: 1px solid rgba(11, 110, 121, 0.12);
+      color: var(--text-muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--teal-main), var(--teal-dark));
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      box-shadow: 0 14px 35px rgba(9, 102, 107, 0.5);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px rgba(9, 102, 107, 0.65);
+    }
+
+    .btn-ghost {
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(11, 110, 121, 0.22);
+      background: rgba(255, 255, 255, 0.85);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--teal-dark);
+    }
+
+    .hero-meta {
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hero-visual {
+      position: relative;
+      padding: 18px;
+    }
+
+    .hero-card {
+      background: radial-gradient(circle at top, #e7fffb, #ffffff 65%);
+      border-radius: 26px;
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 20px;
+      border: 1px solid rgba(11, 110, 121, 0.12);
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .hero-chip {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.06);
+      color: var(--accent-blue);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-chip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .mini-card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 10px;
+      border: 1px solid rgba(11, 110, 121, 0.08);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--teal-dark);
+      margin-bottom: 4px;
+    }
+
+    .sparkline {
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(15, 173, 157, 0.2), rgba(37, 99, 235, 0.18));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sparkline::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.8), rgba(37, 99, 235, 0.7));
+      clip-path: polygon(0% 70%, 15% 40%, 30% 55%, 45% 30%, 60% 50%, 75% 25%, 90% 35%, 100% 20%, 100% 100%, 0% 100%);
+    }
+
+    .floating-pill {
+      position: absolute;
+      right: 6px;
+      bottom: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(11, 110, 121, 0.95);
+      color: #e7fffb;
+      font-size: 0.7rem;
+      box-shadow: 0 12px 26px rgba(5, 46, 58, 0.5);
+    }
+
+    /* Sections */
+    section {
+      margin-top: 42px;
+    }
+
+    .section-header {
+      margin-bottom: 16px;
+    }
+
+    .section-kicker {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--teal-dark);
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .section-description {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      padding: 18px 18px 20px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(11, 110, 121, 0.08);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .bullet-list {
+      margin-top: 8px;
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .bullet-list li {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .bullet-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-top: 7px;
+      background: var(--teal-main);
+      flex-shrink: 0;
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 173, 157, 0.08);
+      color: var(--teal-dark);
+      font-size: 0.8rem;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .tags {
+      margin-top: 10px;
+    }
+
+    /* DataCheck section */
+    .datacheck-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .placeholder-note {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .chart-card {
+      background: radial-gradient(circle at top, #e7fffb, #ffffff 60%);
+      border-radius: 18px;
+      padding: 10px;
+      border: 1px solid rgba(11, 110, 121, 0.08);
+      font-size: 0.8rem;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .chart-visual-bar {
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(15, 173, 157, 0.2), rgba(37, 99, 235, 0.1));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-visual-bar::after {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(15, 173, 157, 0.78), rgba(37, 99, 235, 0.85));
+      clip-path: polygon(0% 80%, 20% 20%, 40% 55%, 60% 25%, 80% 60%, 100% 35%, 100% 100%, 0 100%);
+    }
+
+    .chart-visual-pie {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: conic-gradient(var(--teal-main) 0 40%, #22c55e 40% 65%, var(--accent-blue) 65% 100%);
+      border: 4px solid #ffffff;
+      box-shadow: 0 8px 16px rgba(15, 173, 157, 0.3);
+    }
+
+    .chart-flex-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .legend {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 2px;
+    }
+
+    .legend-swatch {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    /* Contact */
+    .contact-card {
+      background: linear-gradient(135deg, rgba(15, 173, 157, 0.06), rgba(11, 110, 121, 0.08));
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      border: 1px solid rgba(11, 110, 121, 0.12);
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+    }
+
+    .contact-details {
+      font-size: 0.92rem;
+    }
+
+    .contact-details h3 {
+      margin-bottom: 6px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .contact-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal-dark);
+      flex-shrink: 0;
+    }
+
+    .contact-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .contact-form {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 14px 14px 16px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(11, 110, 121, 0.12);
+      font-size: 0.85rem;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    input, textarea {
+      border-radius: 12px;
+      border: 1px solid rgba(11, 110, 121, 0.18);
+      padding: 7px 9px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--teal-main);
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(15, 173, 157, 0.25);
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .form-footnote {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    footer {
+      margin-top: 32px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(11, 110, 121, 0.18);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 840px) {
+      .hero,
+      .about-grid,
+      .datacheck-layout,
+      .contact-card {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-visual {
+        order: -1;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 22px;
+      }
+
+      .page {
+        padding-inline: 18px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .chart-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .hero-actions button,
+      .hero-actions a {
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="logo">
+        <div class="logo-mark">DC</div>
+        <span>DataCheck</span>
+      </div>
+      <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#datacheck">DataCheck</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <button class="nav-cta" onclick="document.getElementById('datacheck').scrollIntoView({behavior: 'smooth'})">
+        View Insights <span>↗</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <!-- Hero / Home -->
+    <section id="home" class="hero">
+      <div>
+        <div class="hero-kicker">
+          <span class="hero-kicker-dot"></span>
+          Public Health Data, Simplified
+        </div>
+        <h1 class="hero-title">
+          Welcome to <span class="hero-highlight">DataCheck</span> –
+          your No. 1 hub for making public health data easy to use.
+        </h1>
+        <p class="hero-subtitle">
+          Across Nigeria and many low- and middle-income countries, public health practitioners,
+          programme managers, policymakers, and students often struggle to access, interpret, and
+          use complex health data for decision-making.
+        </p>
+        <p class="hero-subtitle">
+          New and early-career Monitoring &amp; Evaluation (M&amp;E) professionals face steep learning
+          curves with indicators, definitions, calculations, and reporting frameworks. Without accessible
+          guidance, it is hard to translate data into actionable insights.
+        </p>
+
+        <div class="hero-badge-row">
+          <div class="hero-badge">Nigeria &amp; LMIC-focused</div>
+          <div class="hero-badge">Dashboards + M&amp;E Bot</div>
+          <div class="hero-badge">Built for busy practitioners</div>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
+            Learn how DataCheck works
+            <span>➜</span>
+          </button>
+          <button class="btn-ghost" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">
+            Get in touch
+          </button>
+        </div>
+
+        <p class="hero-meta">No coding required. Just clearer health data and friendlier M&amp;E guidance.</p>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <span>Sample LMIC dashboard</span>
+            <span class="hero-chip"><span class="hero-chip-dot"></span> Live preview</span>
+          </div>
+          <div class="mini-grid">
+            <div class="mini-card">
+              <strong>Immunisation</strong>
+              DTP3 coverage up 8% across pilot states.
+            </div>
+            <div class="mini-card">
+              <strong>Maternal Health</strong>
+              ANC4+ tracking dashboards for facilities.
+            </div>
+            <div class="mini-card">
+              <strong>Zero-dose</strong>
+              Quickly spot LGAs with highest gaps.
+            </div>
+          </div>
+          <div class="sparkline"></div>
+          <div class="floating-pill">AI-assisted data stories in seconds</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+      <div class="section-header">
+        <div class="section-kicker">About</div>
+        <h2 class="section-title">Why DataCheck exists</h2>
+        <p class="section-description">
+          DataCheck was developed during the Graph Network GenAI training to make public health
+          data more understandable, accessible, and actionable for everyone – regardless of
+          technical background.
+        </p>
+      </div>
+
+      <div class="section-card about-grid">
+        <div>
+          <h3>The DataCheck platform</h3>
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-top:4px;">
+            DataCheck provides an easy-to-use online platform that centralises public health data and
+            turns it into intuitive visual dashboards for quick, evidence-based decisions.
+          </p>
+          <ul class="bullet-list">
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Combine routine data from multiple sources into one clean view.</span>
+            </li>
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Surface trends and outliers that matter for programme performance.</span>
+            </li>
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Support quick briefs for review meetings, donor reports, and supervision visits.</span>
+            </li>
+          </ul>
+
+          <div class="tags">
+            <span class="tag-pill">📊 Dashboards</span>
+            <span class="tag-pill">🌍 Public health</span>
+            <span class="tag-pill">📈 Evidence-based decisions</span>
+          </div>
+        </div>
+
+        <div>
+          <h3>The DataCheck Bot</h3>
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-top:4px;">
+            The DataCheck Bot is a conversational assistant that makes Monitoring &amp; Evaluation
+            concepts less intimidating for beginners and busy teams.
+          </p>
+          <ul class="bullet-list">
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Explains indicators, definitions, and calculations in simple language.</span>
+            </li>
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Supports interpretation of charts and tables so teams can act with confidence.</span>
+            </li>
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Helps navigate reporting frameworks and routine data questions on demand.</span>
+            </li>
+          </ul>
+
+          <div class="tags">
+            <span class="tag-pill">🤖 M&amp;E helper</span>
+            <span class="tag-pill">🧠 Plain-language explanations</span>
+            <span class="tag-pill">⚡ Beginner-friendly</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DataCheck Section -->
+    <section id="datacheck">
+      <div class="section-header">
+        <div class="section-kicker">DataCheck</div>
+        <h2 class="section-title">Sample insights and placeholders</h2>
+        <p class="section-description">
+          This section showcases placeholders for analysed data and dashboards that you can later
+          connect to live public health datasets.
+        </p>
+      </div>
+
+      <div class="section-card datacheck-layout">
+        <div>
+          <p class="placeholder-note">
+            These tiles are mock-ups for immunisation, RMNCH, and other programme dashboards. Replace
+            them with live charts when your data pipeline is ready.
+          </p>
+
+          <div class="chart-grid">
+            <div class="chart-card">
+              <div class="chart-header">
+                <span>Immunisation coverage</span>
+                <span>State view</span>
+              </div>
+              <div class="chart-visual-bar"></div>
+              <div class="legend" style="margin-top:6px;">
+                <div class="legend-item">
+                  <span class="legend-swatch" style="background:var(--teal-main);"></span>
+                  <span>DTP3</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-swatch" style="background:#22c55e;"></span>
+                  <span>MR1</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <span>Maternal health</span>
+                <span>Facility clusters</span>
+              </div>
+              <div class="chart-flex-row">
+                <div class="chart-visual-pie"></div>
+                <div class="legend">
+                  <div class="legend-item">
+                    <span class="legend-swatch" style="background:var(--teal-main);"></span>
+                    <span>ANC4+ complete</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-swatch" style="background:#22c55e;"></span>
+                    <span>Skilled birth attendance</span>
+                  </div>
+                  <div class="legend-item">
+                    <span class="legend-swatch" style="background:var(--accent-blue);"></span>
+                    <span>Postnatal follow-up</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <span>Zero-dose children</span>
+                <span>LGA ranking</span>
+              </div>
+              <div class="chart-visual-bar" style="margin-bottom:6px;"></div>
+              <p style="font-size:0.75rem; color:var(--text-muted);">
+                Quickly identify LGAs with the highest proportion of zero-dose children for targeted
+                outreach.
+              </p>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <span>Custom analysis</span>
+                <span>Placeholder</span>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">
+                Reserve space here for your own custom dashboards – for example, TB, HIV, supply chain
+                or HRH indicators that matter to your programme.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size:1rem; margin-bottom:6px;">How this section will evolve</h3>
+          <p style="font-size:0.9rem; color:var(--text-muted);">
+            For now, this area acts as a visual placeholder, showing how DataCheck can present health
+            data in a clean, intuitive way. As you build your AI and data pipelines, you can:
+          </p>
+          <ul class="bullet-list" style="margin-top:8px;">
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Connect real datasets from DHIS2, survey reports, or other sources.</span>
+            </li>
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Use AI to auto-generate quick narratives to accompany each chart.</span>
+            </li>
+            <li>
+              <span class="bullet-dot"></span>
+              <span>Allow users to ask questions in natural language and see charts update.</span>
+            </li>
+          </ul>
+
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-top:10px;">
+            Think of this page as your living prototype – a simple, elegant canvas for the future of
+            DataCheck.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="section-header">
+        <div class="section-kicker">Contact</div>
+        <h2 class="section-title">Connect with the creator</h2>
+        <p class="section-description">
+          Reach out to share feedback, explore collaboration, or discuss how DataCheck could support
+          your public health work.
+        </p>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-details">
+          <h3>Project Lead</h3>
+          <div class="contact-item">
+            <span class="contact-dot"></span>
+            <span><strong>Name:</strong> Joseph Odu</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-dot"></span>
+            <span><strong>Mobile:</strong> +1 800 111 2222</span>
+          </div>
+          <p class="contact-note">
+            For privacy and to reduce spam, direct email is not listed here. You can adapt this section
+            later with a preferred professional channel (e.g. contact form, LinkedIn, or organisational
+            email).
+          </p>
+        </div>
+
+        <div class="contact-form">
+          <div class="form-row">
+            <label for="name">Your name</label>
+            <input type="text" id="name" placeholder="Enter your name" />
+          </div>
+          <div class="form-row">
+            <label for="org">Organisation (optional)</label>
+            <input type="text" id="org" placeholder="e.g. Ministry of Health, NGO, University" />
+          </div>
+          <div class="form-row">
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Share your ideas, questions, or collaboration interests..."></textarea>
+          </div>
+          <button class="btn-primary" type="button" style="width:100%; justify-content:center; margin-top:4px;">
+            Submit (prototype only)
+          </button>
+          <p class="form-footnote">
+            This is a static demo form for now. In a live deployment, connect it to your preferred
+            backend or no-code form service.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      &copy; <span id="year"></span> DataCheck. Built as part of a Generative AI for Work &amp; Research journey.
+    </footer>
+  </main>
+
+  <script>
+    // Simple footer year update
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
